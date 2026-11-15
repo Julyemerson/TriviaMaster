@@ -48,8 +48,26 @@ public class TriviaProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
                         @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String limit = uri.getQueryParameter(TriviaContract.PARAM_LIMIT); // null = sem limite
         return db.query(tableForQuery(uri), projection, selection, selectionArgs,
-                null, null, sortOrder);
+                null, null, sortOrder, limit);
+    }
+
+    /** Várias linhas numa única transação: mais rápido e "tudo ou nada". */
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] valuesArray) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int inserted = 0;
+        db.beginTransaction();
+        try {
+            for (ContentValues values : valuesArray) {
+                if (insert(uri, values) != null) inserted++;
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return inserted;
     }
 
     @Nullable

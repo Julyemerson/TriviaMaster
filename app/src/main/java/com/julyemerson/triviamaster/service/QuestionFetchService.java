@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.julyemerson.triviamaster.R;
 import com.julyemerson.triviamaster.data.OpenTriviaClient;
+import com.julyemerson.triviamaster.data.QuestionStorage;
 import com.julyemerson.triviamaster.data.TriviaApiException;
 import com.julyemerson.triviamaster.model.MatchConfig;
 import com.julyemerson.triviamaster.model.Question;
@@ -20,7 +21,8 @@ import java.util.concurrent.Executors;
 
 /**
  * Baixa as questões em segundo plano, desacoplado da tela.
- * Não conhece nenhuma Activity: só avisa o resultado por broadcast (READY ou FAILED).
+ * Sucesso: avisa READY e salva no cache. Falha: tenta o cache (READY offline) ou avisa FAILED.
+ * Não conhece nenhuma Activity: só avisa o resultado por broadcast.
  */
 public class QuestionFetchService extends Service {
 
@@ -31,8 +33,13 @@ public class QuestionFetchService extends Service {
     public static final String EXTRA_CONFIG = "extra_config";
     public static final String EXTRA_QUESTIONS = "extra_questions";
     public static final String EXTRA_ERROR_MESSAGE = "extra_error_message"; // @StringRes int
+    /** No READY: 0 = questões da API; senão, @StringRes do motivo de estar jogando offline. */
+    public static final String EXTRA_OFFLINE_REASON = "extra_offline_reason";
 
     private static final long RATE_LIMIT_WAIT_MS = 5000; // a API aceita ~1 requisição a cada 5 s
+    /** Mínimo para jogar offline = menor partida possível. Menos que isso não vale a pena. */
+    private static final int MIN_OFFLINE_QUESTIONS = 5;
+    private static final int ONLINE = 0;
 
     // Thread única: se chegarem dois pedidos, rodam um depois do outro (ajuda com o rate limit)
     private ExecutorService executor;
@@ -71,17 +78,50 @@ public class QuestionFetchService extends Service {
 
     /** Roda na thread do Executor. */
     private void fetchAndBroadcast(MatchConfig config) {
+        ArrayList<Question> questions;
         try {
-            sendReady(config, fetchWithRetry(config));
+            questions = fetchWithRetry(config);
         } catch (TriviaApiException e) {
-            Log.w(TAG, "Falha ao buscar questões", e);
-            sendFailed(e.getReason().messageRes);
+            Log.w(TAG, "Falha ao buscar questões, tentando o cache", e);
+            playOffline(config, e.getReason().messageRes);
+            return;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Service sendo destruído durante a espera
+            return;
         } catch (RuntimeException e) {
-            // Qualquer erro inesperado vira mensagem, nunca deixa a tela esperando para sempre
-            Log.e(TAG, "Erro inesperado", e);
-            sendFailed(R.string.error_unexpected);
+            // Qualquer erro inesperado também tenta o cache; nunca deixa a tela esperando
+            Log.e(TAG, "Erro inesperado, tentando o cache", e);
+            playOffline(config, R.string.error_unexpected);
+            return;
+        }
+
+        sendReady(config, questions, ONLINE); // avisa primeiro: o jogador não espera o cache
+        saveToCache(questions);
+    }
+
+    /** Falha no cache não pode atrapalhar a partida que já começou: só registra no log. */
+    private void saveToCache(ArrayList<Question> questions) {
+        try {
+            QuestionStorage.saveAll(getContentResolver(), questions);
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Erro ao salvar questões no cache", e);
+        }
+    }
+
+    /** Sem API: joga com o cache se houver o mínimo; senão, avisa a falha. */
+    private void playOffline(MatchConfig config, int reasonRes) {
+        ArrayList<Question> cached;
+        try {
+            cached = QuestionStorage.loadForOffline(getContentResolver(), config);
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Erro ao ler o cache", e);
+            cached = new ArrayList<>();
+        }
+
+        if (cached.size() >= MIN_OFFLINE_QUESTIONS) {
+            sendReady(config, cached, reasonRes);
+        } else {
+            sendFailed(reasonRes);
         }
     }
 
@@ -103,10 +143,11 @@ public class QuestionFetchService extends Service {
                 config.getAmount(), config.getCategoryId(), config.getDifficulty());
     }
 
-    private void sendReady(MatchConfig config, ArrayList<Question> questions) {
+    private void sendReady(MatchConfig config, ArrayList<Question> questions, int offlineReasonRes) {
         Intent intent = new Intent(ACTION_QUESTIONS_READY);
         intent.putExtra(EXTRA_CONFIG, config);
         intent.putExtra(EXTRA_QUESTIONS, questions);
+        intent.putExtra(EXTRA_OFFLINE_REASON, offlineReasonRes);
         sendInternalBroadcast(intent);
     }
 

@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements QuestionsReceiver
                 playerName,
                 getResources().getIntArray(R.array.category_ids)[categoryPos],
                 spinnerCategory.getSelectedItem().toString(),
+                getResources().getStringArray(R.array.category_api_names)[categoryPos],
                 getResources().getStringArray(R.array.difficulty_values)[difficultyPos],
                 spinnerDifficulty.getSelectedItem().toString(),
                 Integer.parseInt(spinnerAmount.getSelectedItem().toString()));
@@ -95,17 +97,23 @@ public class MainActivity extends AppCompatActivity implements QuestionsReceiver
     // ----- QuestionsReceiver.Listener (chamados na main thread) -----
 
     @Override
-    public void onQuestionsReady(MatchConfig config, ArrayList<Question> questions) {
+    public void onQuestionsReady(MatchConfig config, ArrayList<Question> questions, int offlineReasonRes) {
         setLoading(false);
+        if (offlineReasonRes != 0) {
+            // Ex.: "Sem conexão com a internet. Jogando com 10 questões salvas."
+            Toast.makeText(this, getString(R.string.msg_playing_offline,
+                    getString(offlineReasonRes), questions.size()), Toast.LENGTH_LONG).show();
+        }
         startActivity(QuizActivity.newIntent(this, config, questions));
     }
 
+    /** Só chega aqui quando a API falhou E o cache não tinha questões suficientes. */
     @Override
     public void onQuestionsFailed(int messageRes) {
         setLoading(false);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_error_title)
-                .setMessage(messageRes)
+                .setMessage(getString(R.string.msg_failed_without_cache, getString(messageRes)))
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
     }

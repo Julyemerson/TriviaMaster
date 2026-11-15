@@ -19,7 +19,8 @@ import java.util.ArrayList;
 public class QuestionsReceiver extends BroadcastReceiver {
 
     public interface Listener {
-        void onQuestionsReady(MatchConfig config, ArrayList<Question> questions);
+        /** @param offlineReasonRes 0 = veio da API; senão, motivo de estar usando o cache */
+        void onQuestionsReady(MatchConfig config, ArrayList<Question> questions, int offlineReasonRes);
 
         void onQuestionsFailed(int messageRes);
     }
@@ -50,7 +51,8 @@ public class QuestionsReceiver extends BroadcastReceiver {
             if (config == null || questions == null || questions.isEmpty()) {
                 listener.onQuestionsFailed(R.string.error_unexpected);
             } else {
-                listener.onQuestionsReady(config, questions);
+                listener.onQuestionsReady(config, questions,
+                        intent.getIntExtra(QuestionFetchService.EXTRA_OFFLINE_REASON, 0));
             }
 
         } else if (QuestionFetchService.ACTION_QUESTIONS_FAILED.equals(action)) {

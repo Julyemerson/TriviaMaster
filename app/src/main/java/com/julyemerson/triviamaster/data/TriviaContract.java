@@ -13,6 +13,9 @@ public final class TriviaContract {
     public static final String AUTHORITY = "com.julyemerson.triviamaster.provider";
     public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
 
+    /** Parâmetro opcional de consulta: content://.../questions?limit=10 */
+    public static final String PARAM_LIMIT = "limit";
+
     private TriviaContract() { }
 
     /** content://.../players  (BaseColumns traz a coluna _ID) */

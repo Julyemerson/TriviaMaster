@@ -51,6 +51,8 @@
     <string name="error_invalid_response">Resposta inesperada do servidor.</string>
     <string name="error_unexpected">Ocorreu um erro inesperado. Tente novamente.</string>
     <string name="dialog_error_title">Não foi possível iniciar a partida</string>
+    <string name="msg_playing_offline">%1$s Jogando com %2$d questões salvas.</string>
+    <string name="msg_failed_without_cache">%s\n\nTambém não há questões salvas suficientes para jogar offline (mínimo de 5). Jogue uma partida conectado para salvar questões.</string>
     <string name="history_score">%d pts</string>
     <string name="history_details">%1$s · %2$s · %3$d/%4$d acertos</string>
 </resources>
