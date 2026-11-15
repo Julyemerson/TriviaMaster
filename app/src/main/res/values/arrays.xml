@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Categorias: nomes e IDs do Open Trivia DB na MESMA ordem (listas paralelas).
+         ID 0 = qualquer categoria (o parâmetro não é enviado). -->
+    <string-array name="category_names">
+        <item>Qualquer categoria</item>
+        <item>Conhecimentos gerais</item>
+        <item>Livros</item>
+        <item>Filmes</item>
+        <item>Música</item>
+        <item>Musicais e teatro</item>
+        <item>Televisão</item>
+        <item>Video games</item>
+        <item>Jogos de tabuleiro</item>
+        <item>Ciência e natureza</item>
+        <item>Computação</item>
+        <item>Matemática</item>
+        <item>Mitologia</item>
+        <item>Esportes</item>
+        <item>Geografia</item>
+        <item>História</item>
+        <item>Política</item>
+        <item>Arte</item>
+        <item>Celebridades</item>
+        <item>Animais</item>
+        <item>Veículos</item>
+        <item>Quadrinhos</item>
+        <item>Gadgets</item>
+        <item>Anime e mangá</item>
+        <item>Desenhos animados</item>
+    </string-array>
+
+    <integer-array name="category_ids">
+        <item>0</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+    </integer-array>
+
+    <!-- Dificuldade: rótulo em português e valor aceito pela API ("" = qualquer) -->
+    <string-array name="difficulty_names">
+        <item>Qualquer dificuldade</item>
+        <item>Fácil</item>
+        <item>Média</item>
+        <item>Difícil</item>
+    </string-array>
+
+    <string-array name="difficulty_values">
+        <item></item>
+        <item>easy</item>
+        <item>medium</item>
+        <item>hard</item>
+    </string-array>
+
+    <string-array name="amount_options">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+    </string-array>
+</resources>

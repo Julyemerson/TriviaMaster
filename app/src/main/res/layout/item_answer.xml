@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Uma linha do resumo: pergunta, resposta do jogador e resposta correta -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/textAnswerQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        tools:text="1. What is the capital of Brazil?" />
+
+    <TextView
+        android:id="@+id/textAnswerChosen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Sua resposta: Brasília (+17)" />
+
+    <TextView
+        android:id="@+id/textAnswerCorrect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Correta: Brasília" />
+</LinearLayout>

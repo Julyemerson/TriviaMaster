@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Trivia Master</string>
+
+    <!-- MainActivity -->
+    <string name="label_player_name">Nome do jogador</string>
+    <string name="hint_player_name">Digite seu nome</string>
+    <string name="label_category">Categoria</string>
+    <string name="label_difficulty">Dificuldade</string>
+    <string name="label_amount">Quantidade de questões</string>
+    <string name="button_start">Iniciar partida</string>
+    <string name="button_history">Histórico</string>
+    <string name="error_empty_name">Informe seu nome para jogar</string>
+
+    <!-- QuizActivity -->
+    <string name="quiz_progress">%1$d/%2$d</string>
+    <string name="quiz_score">Pontos: %d</string>
+    <string name="quiz_seconds">%d s</string>
+    <string name="quiz_category">%1$s · %2$s</string>
+    <string name="feedback_correct">Correto! +%d pontos</string>
+    <string name="feedback_wrong">Errado!</string>
+    <string name="feedback_time_up">Tempo esgotado!</string>
+    <string name="error_no_questions">Não há questões para iniciar a partida.</string>
+
+    <!-- ResultActivity -->
+    <string name="result_title">Fim de jogo!</string>
+    <string name="result_score">%d pontos</string>
+    <string name="result_correct_count">%1$d de %2$d acertos (%3$d%%)</string>
+    <string name="result_answers_header">Suas respostas</string>
+    <string name="result_question_number">%1$d. %2$s</string>
+    <string name="result_chosen_correct">Sua resposta: %1$s (+%2$d)</string>
+    <string name="result_chosen_wrong">Sua resposta: %s</string>
+    <string name="result_time_up">Tempo esgotado</string>
+    <string name="result_correct_answer">Correta: %s</string>
+    <string name="button_play_again">Jogar novamente</string>
+    <string name="error_no_result">Não foi possível exibir o resultado.</string>
+
+    <!-- HistoryActivity -->
+    <string name="history_title">Histórico</string>
+    <string name="history_empty">Nenhuma partida jogada ainda.</string>
+    <string name="history_score">%d pts</string>
+    <string name="history_details">%1$s · %2$s · %3$d/%4$d acertos</string>
+</resources>
