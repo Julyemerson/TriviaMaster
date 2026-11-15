@@ -40,6 +40,17 @@
     <string name="history_title">Histórico</string>
     <string name="history_empty">Nenhuma partida jogada ainda.</string>
     <string name="error_load_history">Não foi possível carregar o histórico.</string>
+
+    <!-- Erros da API (TriviaApiException.Reason) -->
+    <string name="error_no_connection">Sem conexão com a internet.</string>
+    <string name="error_timeout">O servidor demorou demais para responder.</string>
+    <string name="error_server_unavailable">O Open Trivia DB está indisponível no momento.</string>
+    <string name="error_not_enough_questions">Não há questões suficientes para essa configuração. Tente uma quantidade menor ou outra categoria.</string>
+    <string name="error_invalid_parameter">Configuração de partida inválida.</string>
+    <string name="error_rate_limit">Muitas requisições seguidas. Aguarde 5 segundos e tente de novo.</string>
+    <string name="error_invalid_response">Resposta inesperada do servidor.</string>
+    <string name="error_unexpected">Ocorreu um erro inesperado. Tente novamente.</string>
+    <string name="dialog_error_title">Não foi possível iniciar a partida</string>
     <string name="history_score">%d pts</string>
     <string name="history_details">%1$s · %2$s · %3$d/%4$d acertos</string>
 </resources>

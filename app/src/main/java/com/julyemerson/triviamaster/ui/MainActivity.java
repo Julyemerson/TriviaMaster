@@ -2,24 +2,36 @@ package com.julyemerson.triviamaster.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.julyemerson.triviamaster.R;
 import com.julyemerson.triviamaster.model.MatchConfig;
-import com.julyemerson.triviamaster.model.MockQuestions;
+import com.julyemerson.triviamaster.model.Question;
+import com.julyemerson.triviamaster.receiver.QuestionsReceiver;
+import com.julyemerson.triviamaster.service.QuestionFetchService;
 
-/** Tela inicial: identifica o jogador e configura a partida. */
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+/** Tela inicial: identifica o jogador, configura a partida e pede as questões ao Service. */
+public class MainActivity extends AppCompatActivity implements QuestionsReceiver.Listener {
 
     private EditText editPlayerName;
     private Spinner spinnerCategory;
     private Spinner spinnerDifficulty;
     private Spinner spinnerAmount;
+    private Button buttonStart;
+    private ProgressBar progressLoading;
+
+    private final QuestionsReceiver questionsReceiver = new QuestionsReceiver(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +44,28 @@ public class MainActivity extends AppCompatActivity {
         spinnerCategory = findViewById(R.id.spinnerCategory);
         spinnerDifficulty = findViewById(R.id.spinnerDifficulty);
         spinnerAmount = findViewById(R.id.spinnerAmount);
+        buttonStart = findViewById(R.id.buttonStart);
+        progressLoading = findViewById(R.id.progressLoading);
 
-        Button buttonStart = findViewById(R.id.buttonStart);
-        Button buttonHistory = findViewById(R.id.buttonHistory);
         buttonStart.setOnClickListener(v -> onStartClicked());
-        buttonHistory.setOnClickListener(v -> onHistoryClicked());
+        findViewById(R.id.buttonHistory).setOnClickListener(
+                v -> startActivity(new Intent(this, HistoryActivity.class)));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // NOT_EXPORTED: só broadcasts do nosso próprio app chegam aqui
+        ContextCompat.registerReceiver(this, questionsReceiver,
+                QuestionsReceiver.createFilter(), ContextCompat.RECEIVER_NOT_EXPORTED);
+    }
+
+    @Override
+    protected void onStop() {
+        // Tela invisível não deve reagir (nem abrir o quiz por cima de outro app)
+        unregisterReceiver(questionsReceiver);
+        setLoading(false);
+        super.onStop();
     }
 
     private void onStartClicked() {
@@ -46,10 +75,8 @@ public class MainActivity extends AppCompatActivity {
             editPlayerName.requestFocus();
             return;
         }
-
-        MatchConfig config = buildMatchConfig(playerName);
-        // Fase 1: questões mockadas. Na Fase 3 isso vira o Service que chama a API.
-        startActivity(QuizActivity.newIntent(this, config, MockQuestions.get(config.getAmount())));
+        setLoading(true); // botão desabilitado = sem cliques duplos (evita rate limit)
+        QuestionFetchService.start(this, buildMatchConfig(playerName));
     }
 
     /** Os arrays de nomes e de valores têm a mesma ordem: a posição do Spinner é o índice. */
@@ -65,7 +92,26 @@ public class MainActivity extends AppCompatActivity {
                 Integer.parseInt(spinnerAmount.getSelectedItem().toString()));
     }
 
-    private void onHistoryClicked() {
-        startActivity(new Intent(this, HistoryActivity.class));
+    // ----- QuestionsReceiver.Listener (chamados na main thread) -----
+
+    @Override
+    public void onQuestionsReady(MatchConfig config, ArrayList<Question> questions) {
+        setLoading(false);
+        startActivity(QuizActivity.newIntent(this, config, questions));
+    }
+
+    @Override
+    public void onQuestionsFailed(int messageRes) {
+        setLoading(false);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_error_title)
+                .setMessage(messageRes)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+
+    private void setLoading(boolean loading) {
+        progressLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+        buttonStart.setEnabled(!loading);
     }
 }
