@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Fundo do ícone do app -->
+    <color name="launcher_background">#FF6750A4</color>
 
     <!-- Feedback de resposta no quiz -->
     <color name="answer_correct">#FF2E7D32</color>
