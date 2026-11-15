@@ -33,6 +33,12 @@
         <activity
             android:name=".ui.HistoryActivity"
             android:exported="false" />
+
+        <!-- authorities = TriviaContract.AUTHORITY; exported=false: só este app acessa os dados -->
+        <provider
+            android:name=".data.TriviaProvider"
+            android:authorities="com.julyemerson.triviamaster.provider"
+            android:exported="false" />
     </application>
 
 </manifest>

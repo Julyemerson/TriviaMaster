@@ -15,6 +15,14 @@
         android:textSize="28sp"
         android:textStyle="bold" />
 
+    <!-- Visível enquanto o Executor lê o banco -->
+    <ProgressBar
+        android:id="@+id/progressHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
     <ListView
         android:id="@+id/listMatches"
         android:layout_width="match_parent"

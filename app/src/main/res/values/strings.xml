@@ -33,10 +33,13 @@
     <string name="result_correct_answer">Correta: %s</string>
     <string name="button_play_again">Jogar novamente</string>
     <string name="error_no_result">Não foi possível exibir o resultado.</string>
+    <string name="msg_result_saved">Resultado salvo no histórico</string>
+    <string name="error_save_result">Não foi possível salvar o resultado.</string>
 
     <!-- HistoryActivity -->
     <string name="history_title">Histórico</string>
     <string name="history_empty">Nenhuma partida jogada ainda.</string>
+    <string name="error_load_history">Não foi possível carregar o histórico.</string>
     <string name="history_score">%d pts</string>
     <string name="history_details">%1$s · %2$s · %3$d/%4$d acertos</string>
 </resources>
